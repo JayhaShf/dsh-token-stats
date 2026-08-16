@@ -1,0 +1,6 @@
+# dsh-token-stats bundle patch: mounts the token usage statistics plugin
+# (host capture + /tokens-api HTTP API + browser settings section + token_stats tool).
+- insert:
+    - id: token-stats
+      name: dsh-token-stats
+      inject: [sessions, tools, webServer]

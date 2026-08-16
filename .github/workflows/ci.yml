@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-fresh-install:
+    name: ${{ matrix.os }} · test & fresh install
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    env:
+      DSH_HOME: ${{ runner.temp }}/dsh-home
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run self-test against source
+        run: npm test
+
+      - name: Install dsh CLI and pnpm
+        run: |
+          npm install -g pnpm@11.3.0
+          npm install -g @deepseek-ai/dsh@0.1.0-rc.6
+
+      - name: Pack plugin tarball
+        run: pnpm pack
+
+      - name: Fresh install from tarball into a clean profile
+        run: dsh plugin --profile fresh add ./dsh-token-stats-0.1.0.tgz
+
+      - name: Verify profile registration
+        run: |
+          node -e "const p=require(process.env.DSH_HOME + '/profiles/fresh/package.json'); if (!p.dependencies || !p.dependencies['dsh-token-stats']) process.exit(1); if (!p.dsh?.profile?.bundles?.includes('dsh-token-stats')) process.exit(1); console.log('profile registration ok')"
+
+      - name: Run self-test against installed package
+        run: |
+          DSH_TOKEN_STATS_ENTRY="$DSH_HOME/profiles/fresh/node_modules/dsh-token-stats/lib/index.js" npm test
