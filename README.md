@@ -24,14 +24,14 @@
 
 ### 方式一：从 GitHub 安装（推荐）
 
-仓库内已包含预构建的 `lib/`，无需构建脚本。建议锁定 commit，避免远端推送
+仓库内已包含预构建的 `lib/`，无需构建脚本。建议锁定 commit 或 tag，避免远端推送
 静默改变安装内容（`#<sha>` 是硬锁）：
 
 ```sh
-dsh plugin --profile web add github:JayhaShf/dsh-token-stats#da09c8e3ed1e4965e2d58aa6482623747f09fb4c
+dsh plugin --profile web add github:JayhaShf/dsh-token-stats#v0.1.0
 ```
 
-> 发布新版本时，把 `da09c8e3ed1e4965e2d58aa6482623747f09fb4c` 替换为 `git rev-parse HEAD` 的实际提交哈希。
+> 发布新版本时，把 `#v0.1.0` 换成新 tag（或用 `git rev-parse HEAD` 固定到具体 commit）。
 
 ### 方式二：tarball 安装
 
