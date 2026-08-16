@@ -28,10 +28,10 @@
 静默改变安装内容（`#<sha>` 是硬锁）：
 
 ```sh
-dsh plugin --profile web add github:JayhaShf/dsh-token-stats#<commit-sha>
+dsh plugin --profile web add github:JayhaShf/dsh-token-stats#da09c8e3ed1e4965e2d58aa6482623747f09fb4c
 ```
 
-> 发布新版本时，把 `<commit-sha>` 替换为 `git rev-parse HEAD` 的实际提交哈希。
+> 发布新版本时，把 `da09c8e3ed1e4965e2d58aa6482623747f09fb4c` 替换为 `git rev-parse HEAD` 的实际提交哈希。
 
 ### 方式二：tarball 安装
 
