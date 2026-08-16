@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-and-fresh-install:
-    name: ${{ matrix.os }} · test & fresh install
+    name: "${{ matrix.os }} fresh install"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -17,8 +17,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      DSH_HOME: ${{ runner.temp }}/dsh-home
     steps:
       - uses: actions/checkout@v4
 
@@ -42,12 +40,16 @@ jobs:
         run: pnpm pack
 
       - name: Fresh install from tarball into a clean profile
-        run: dsh plugin --profile fresh add ./dsh-token-stats-0.1.0.tgz
+        run: |
+          export DSH_HOME="$RUNNER_TEMP/dsh-home"
+          dsh plugin --profile fresh add ./dsh-token-stats-0.1.0.tgz
 
       - name: Verify profile registration
         run: |
+          export DSH_HOME="$RUNNER_TEMP/dsh-home"
           node -e "const p=require(process.env.DSH_HOME + '/profiles/fresh/package.json'); if (!p.dependencies || !p.dependencies['dsh-token-stats']) process.exit(1); if (!p.dsh?.profile?.bundles?.includes('dsh-token-stats')) process.exit(1); console.log('profile registration ok')"
 
       - name: Run self-test against installed package
         run: |
+          export DSH_HOME="$RUNNER_TEMP/dsh-home"
           DSH_TOKEN_STATS_ENTRY="$DSH_HOME/profiles/fresh/node_modules/dsh-token-stats/lib/index.js" npm test
